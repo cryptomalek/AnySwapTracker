@@ -4,6 +4,7 @@ from datetime import datetime
 import myDB
 import myWeb3
 import exchange_db
+import CMC
 
 
 def getTokenAddress(network, tokenName, tokensList):
@@ -48,9 +49,15 @@ if __name__ == '__main__':
             # circ, price, company_alloc, team_alloc, liq_rewards, awn_alloc, community_alloc, swap_rewards
             print('Querying marketcap info...')
             nonCircBalances = myWeb3.getCirc()
-            myDB.addMarketcap(nonCircBalances[6], anyPrice, nonCircBalances[0], nonCircBalances[1], nonCircBalances[2], nonCircBalances[3], nonCircBalances[4], nonCircBalances[5])
+            mc = nonCircBalances[6] * anyPrice
+            cmc_rank = CMC.getCMCRank(mc)
+            print(f'Circulating supply: {nonCircBalances[6]}')
+            print(f'cmc_rank: {cmc_rank}')
+            print(f'mc: {mc}')
+            myDB.addMarketcap(nonCircBalances[6], anyPrice, nonCircBalances[0], nonCircBalances[1], nonCircBalances[2], nonCircBalances[3], nonCircBalances[4], nonCircBalances[5], cmc_rank,
+                              anyPrice / fsnPrice)
             print('Completed', datetime.now())
-        except (Exception) as error:
+        except Exception as error:
             print(error)
         time.sleep(600)
     exit()

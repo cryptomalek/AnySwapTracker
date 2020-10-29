@@ -55,10 +55,10 @@ def addBalance(network, lp, anyBalance, lpBalance, lpTotalSupply, baseTotalSuppl
     return
 
 
-def addMarketcap(circ, price, swap_rewards, company_alloc, team_alloc, liq_rewards, awn_alloc, community_alloc):
+def addMarketcap(circ, price, swap_rewards, company_alloc, team_alloc, liq_rewards, awn_alloc, community_alloc, cmc_rank, fsnprice):
     """ insert a new vendor into the vendors table """
-    sql = f"""INSERT INTO public.marketcap (circ, price, company_alloc, team_alloc, liq_rewards, awn_alloc, community_alloc, swap_rewards)
-             VALUES({circ}, {price}, {company_alloc}, {team_alloc}, {liq_rewards}, {awn_alloc}, {community_alloc}, {swap_rewards});"""
+    sql = f"""INSERT INTO public.marketcap (circ, price, company_alloc, team_alloc, liq_rewards, awn_alloc, community_alloc, swap_rewards, cmc_rank, fsnprice)
+             VALUES({circ}, {price}, {company_alloc}, {team_alloc}, {liq_rewards}, {awn_alloc}, {community_alloc}, {swap_rewards}, {cmc_rank}, {fsnprice});"""
     execSql(sql)
     return
 

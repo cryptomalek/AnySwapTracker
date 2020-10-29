@@ -17,6 +17,7 @@ with open('ERC20abi.json') as json_file:
 
 def getCirc():
     balance = 0
+    nonCircBalances.clear()
     for i in range(6):
         contract = w3f.eth.contract(fANY, abi=abi)
         nonCircBalances.append(contract.functions.balanceOf(nonCircAddresses[i]).call()/10**18)
