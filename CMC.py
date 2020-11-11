@@ -15,11 +15,11 @@ headers = {
 }
 
 
-def getCMCRank(mc:float):
+def getCMCRank(mc: float):
     session = Session()
     session.headers.update(headers)
     try:
-        parameters['market_cap_max']=mc
+        parameters['market_cap_max'] = int(mc)
         response = session.get(url, params=parameters)
         data = json.loads(response.text)
         return data['data'][0]['cmc_rank']

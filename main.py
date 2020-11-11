@@ -15,6 +15,8 @@ def getTokenAddress(network, tokenName, tokensList):
 
 
 if __name__ == '__main__':
+    print(myWeb3.getFTMbalance())
+    exit()
     tokens = myDB.getTokens()
     wallets = myDB.getWallets()
     while True:

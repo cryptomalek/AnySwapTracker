@@ -8,7 +8,11 @@ nonCircBalances = []
 w3e = Web3(Web3.HTTPProvider(
     'https://mainnet.infura.io/v3/25498f326072430f8a9f62f681e3a0da'))
 w3b = Web3(Web3.HTTPProvider('https://bsc-dataseed1.binance.org:443'))
-w3f = Web3(Web3.HTTPProvider('https://mainnetpublicgateway1.fusionnetwork.io:10000'))
+fsn_gateway_url = 'https://mainnetpublicgateway1.fusionnetwork.io:10000'
+fsn_gateway_url = 'https://gw.redefi.tech'
+w3f = Web3(Web3.HTTPProvider(fsn_gateway_url))
+ftm_gateway_url = 'https://rpc.fantom.network/%27'
+w3ftm = Web3(Web3.HTTPProvider(ftm_gateway_url))
 fANY = '0x0c74199D22f732039e843366a236Ff4F61986B32'
 
 with open('ERC20abi.json') as json_file:
@@ -20,9 +24,9 @@ def getCirc():
     nonCircBalances.clear()
     for i in range(6):
         contract = w3f.eth.contract(fANY, abi=abi)
-        nonCircBalances.append(contract.functions.balanceOf(nonCircAddresses[i]).call()/10**18)
+        nonCircBalances.append(contract.functions.balanceOf(nonCircAddresses[i]).call() / 10 ** 18)
         balance += nonCircBalances[i]
-    nonCircBalances.append(100000000.0-balance)
+    nonCircBalances.append(100000000.0 - balance)
     return nonCircBalances
 
 
@@ -74,6 +78,8 @@ def getBalance(network, address, tokenAddress, decimals=0):
         w3 = w3b
     elif network == 'FSN':
         w3 = w3f
+    elif network == 'FTM':
+        w3 = w3ftm
     if tokenAddress == '0x0000000000000000000000000000000000000000':
         balance = w3.eth.getBalance(address)
         return w3.fromWei(balance, 'ether')
@@ -129,3 +135,8 @@ def getPrice(token):
         return float(getPrice('FSN') * float(getBalance('FSN', fsn_any_address, base_address))) / float(getBalance('FSN', fsn_any_address, fany_address))
     else:
         raise Exception(f'Unrecognized token in getPrice function: "{token}"')
+
+
+def getFTMbalance():
+    add = '0xB5BAfFb036576B46F45544174208FAa5b7dc1cfB'
+    return float(getBalance('FTM', add, '0'))
