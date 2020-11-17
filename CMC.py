@@ -1,8 +1,9 @@
 from requests import Request, Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import json
+import util
 
-url = 'https://pro-api.coinmarketcap.com//v1/cryptocurrency/listings/latest'
+url = r'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
 parameters = {
     'start': '1',
     'limit': '1',
@@ -18,11 +19,14 @@ headers = {
 def getCMCRank(mc: float):
     session = Session()
     session.headers.update(headers)
+    data = None
     try:
         parameters['market_cap_max'] = int(mc)
         response = session.get(url, params=parameters)
         data = json.loads(response.text)
         return data['data'][0]['cmc_rank']
-    except (ConnectionError, Timeout, TooManyRedirects) as e:
-        print(e)
-        return 9999
+    except Exception as e:
+        if data is not None:
+            util.log(f'error while loading data from CMC API. Here is the received data response:\n{data}')
+        util.error()
+        return -1

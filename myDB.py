@@ -3,48 +3,31 @@
 import psycopg2
 import myWeb3
 from config import config
+import util
+
+networks = []
+tokens = []
+wallets = []
 
 
-def getTokens():
+def getRows(sql):
     conn = None
+    rows = []
     try:
         params = config()
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        cur.execute("""SELECT t.network, t.name, t.address FROM public.token t ORDER BY t.network, t.name """)
+        cur.execute(sql)
         rows = cur.fetchall()
-        print("The number of Tokens: ", cur.rowcount)
-        tokens = []
-        for row in rows:
-            tokens.append(myWeb3.Token(row[0], row[1], row[2]))
         cur.close()
-        return tokens
     except (Exception, psycopg2.DatabaseError) as error:
+        util.error()
         print(error)
+        rows = []
     finally:
         if conn is not None:
             conn.close()
-
-
-def getWallets():
-    conn = None
-    try:
-        params = config()
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-        cur.execute("""SELECT t.network, t.lp, t.address FROM public.wallet t """)
-        rows = cur.fetchall()
-        print("The number of Wallets: ", cur.rowcount)
-        tokens = []
-        for row in rows:
-            tokens.append(myWeb3.Wallet(row[0], row[1], row[2]))
-        cur.close()
-        return tokens
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
+    return rows
 
 
 def addBalance(network, lp, anyBalance, lpBalance, lpTotalSupply, baseTotalSupply, pairTotalSupply, anyPrice, basePrice):
@@ -66,19 +49,14 @@ def addMarketcap(circ, price, swap_rewards, company_alloc, team_alloc, liq_rewar
 def execSql(sql):
     conn = None
     try:
-        # read database configuration
         params = config()
-        # connect to the PostgreSQL database
         conn = psycopg2.connect(**params)
-        # create a new cursor
         cur = conn.cursor()
-        # execute the INSERT statement
         cur.execute(sql)
-        # commit the changes to the database
         conn.commit()
-        # close communication with the database
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
+        util.error()
         print(error)
     finally:
         if conn is not None:
